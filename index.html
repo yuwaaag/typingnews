@@ -590,44 +590,20 @@
 </div>
 
 <!-- Audio Elements -->
-<!-- Multiple typing sound sources for reliability -->
 <audio id="typingSound" preload="auto">
-    <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
-    <source src="https://cdn.freesound.org/previews/369/369255_4921277-lq.mp3" type="audio/mpeg">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_1f14cb5074.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="breakingSound" preload="auto">
-    <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
-    <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869.wav" type="audio/wav">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="bgMusic" loop preload="auto">
-    <source src="https://assets.mixkit.co/active_storage/sfx/2494/2494-preview.mp3" type="audio/mpeg">
-</audio>
-
-<!-- Backup keyboard click sound -->
-<audio id="clickSound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRhIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoAAAAAAAAA" type="audio/wav">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_d1718ab41b.mp3" type="audio/mpeg">
 </audio>
 
 <script>
     // ========== CONFIGURATION ==========
-    // 📋 GOOGLE SHEET SETUP:
-    // 1. Create Google Sheet with news in Column A (one per row)
-    // 2. No header row needed - start directly with news text
-    // 3. File → Share → Publish to web → CSV format
-    // 4. Paste the CSV link below
-    // 
-    // Example Sheet:
-    // A1: राजस्थान में बारिश
-    // A2: दिल्ली मेट्रो शुरू
-    // A3: भारत ने जीता मैच
-    //
-    // 🔍 DEBUGGING:
-    // Press F12 → Console tab to see detailed logs
-    // Look for "✅ Loaded X news items"
-    // If 0 items, check CSV link and sheet format
-    
     const CSV_LINK = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhoLPXYZWErFbe1kcwZjgTIohG1Rxdnbe7f2OCXl25zKRkELj8Gz7Nye-GG9OTxkHMcqijYtves4vm/pub?gid=0&single=true&output=csv';
     
     let newsData = [];
@@ -640,9 +616,9 @@
     const bgMusic = document.getElementById('bgMusic');
     
     // Set volumes
-    typingSound.volume = 0.6; // Increased from 0.3
-    breakingSound.volume = 0.8;
-    bgMusic.volume = 0.25;
+    typingSound.volume = 0.3;
+    breakingSound.volume = 0.7;
+    bgMusic.volume = 0.2;
 
     // ========== CREATE PARTICLES ==========
     function createParticles() {
@@ -678,77 +654,32 @@
         loadingScreen.style.display = 'flex';
         
         try {
-            console.log("🔄 Fetching news from:", CSV_LINK);
             const response = await fetch(CSV_LINK + '&t=' + Date.now());
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
             const text = await response.text();
-            console.log("📥 CSV Length:", text.length, "characters");
-            console.log("📄 First 200 chars:", text.substring(0, 200));
+            const rows = text.split('\n').slice(1); // Skip header
             
-            // Split by newlines
-            const lines = text.split(/\r?\n/);
-            console.log("📊 Total lines:", lines.length);
+            newsData = rows
+                .map(row => row.trim())
+                .filter(row => row.length > 5)
+                .map(row => {
+                    // Remove quotes and clean
+                    return row.replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+                })
+                .filter(text => text.length > 0);
             
-            // Process each line - DON'T skip first line if no header
-            newsData = [];
-            lines.forEach((line, index) => {
-                line = line.trim();
-                
-                // Skip empty lines
-                if (!line || line.length < 5) return;
-                
-                // Get first column (before first comma)
-                let newsText = line.split(',')[0];
-                
-                // Clean up quotes
-                newsText = newsText.replace(/^["'\s]+|["'\s]+$/g, '');
-                
-                // Valid news text
-                if (newsText && newsText.length > 5) {
-                    newsData.push(newsText);
-                    console.log(`✅ Line ${index + 1}:`, newsText.substring(0, 60));
-                }
-            });
-            
-            console.log(`✅ Total news loaded: ${newsData.length}`);
-            
-            if (newsData.length === 0) {
-                throw new Error("No valid news found in sheet");
-            }
-            
+            console.log(`✅ Loaded ${newsData.length} news items`);
             loadingScreen.style.display = 'none';
-            return true;
-            
+            return newsData.length > 0;
         } catch (e) {
-            console.error("❌ Error:", e.message);
-            
-            // Show error briefly
-            const loadingText = document.querySelector('.loading-text');
-            if (loadingText) {
-                loadingText.innerHTML = `त्रुटि: ${e.message}<br><small>डेमो न्यूज़ का उपयोग कर रहे हैं...</small>`;
-            }
-            
-            await new Promise(r => setTimeout(r, 2000));
-            
-            // Fallback demo news
+            console.error("❌ Error loading news:", e);
+            // Fallback news
             newsData = [
                 "राजस्थान में भारी बारिश से 4 लोगों की मौत, कई इलाके जलमग्न",
-                "दिल्ली मेट्रो की नई ब्लू लाइन एक्सटेंशन आज से शुरू हुई",
+                "दिल्ली मेट्रो की नई ब्लू लाइन एक्सटेंशन आज से शुरू",
                 "भारतीय क्रिकेट टीम ने ऑस्ट्रेलिया को 10 विकेट से हराया",
                 "शेयर बाजार में जबरदस्त तेजी, सेंसेक्स 1000 अंक ऊपर",
-                "सोने की कीमत में भारी गिरावट, 5000 रुपये प्रति 10 ग्राम सस्ता",
-                "सरकार ने किसानों के लिए नई सब्सिडी योजना की घोषणा की",
-                "मुंबई में भारी बारिश का अलर्ट जारी, स्कूल कॉलेज बंद",
-                "IPL 2025: मुंबई इंडियंस ने चेन्नई को हराकर जीता फाइनल मैच",
-                "प्रधानमंत्री ने राष्ट्र को संबोधित किया, बड़ी घोषणाएं कीं",
-                "कोरोना के नए वेरिएंट की चेतावनी, सावधानी बरतने की अपील"
+                "सरकार ने किसानों के लिए नई योजना की घोषणा की"
             ];
-            console.log("⚠️ Using", newsData.length, "fallback news items");
-            
             loadingScreen.style.display = 'none';
             return true;
         }
@@ -774,18 +705,9 @@
             typedTextEl.textContent += text[i];
             
             // Play typing sound (not for spaces)
-            if (text[i] !== ' ' && text[i] !== '\n') {
-                try {
-                    typingSound.currentTime = 0;
-                    const playPromise = typingSound.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(e => {
-                            console.log("Typing sound play error:", e);
-                        });
-                    }
-                } catch (e) {
-                    console.log("Typing sound error:", e);
-                }
+            if (text[i] !== ' ') {
+                typingSound.currentTime = 0;
+                typingSound.play().catch(e => {});
             }
             
             // Variable speed: faster for spaces, slower for punctuation
@@ -863,29 +785,6 @@
     async function startNews() {
         // Hide overlay
         document.getElementById('startOverlay').style.display = 'none';
-        
-        // Initialize audio context (needed for some browsers)
-        try {
-            // Test play all sounds briefly to initialize them
-            typingSound.volume = 0.6;
-            breakingSound.volume = 0.8;
-            bgMusic.volume = 0.25;
-            
-            // Quick test play to unlock audio
-            const testPlay = async () => {
-                try {
-                    await typingSound.play();
-                    typingSound.pause();
-                    typingSound.currentTime = 0;
-                } catch(e) {
-                    console.log("Typing sound init:", e);
-                }
-            };
-            await testPlay();
-            
-        } catch(e) {
-            console.log("Audio init error:", e);
-        }
         
         // Create particles
         createParticles();
