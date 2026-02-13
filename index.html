@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breaking News Ticker - Ultra Advanced</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700;900&family=Roboto:wght@900&display=swap');
+
+```
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        overflow: hidden;
+        font-family: 'Noto Sans Devanagari', sans-serif;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ========== ANIMATED BACKGROUND ========== */
+    .background-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    .bg-grid {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: 
+            linear-gradient(0deg, transparent 24%, rgba(255, 0, 0, .05) 25%, rgba(255, 0, 0, .05) 26%, transparent 27%, transparent 74%, rgba(255, 0, 0, .05) 75%, rgba(255, 0, 0, .05) 76%, transparent 77%, transparent),
+            linear-gradient(90deg, transparent 24%, rgba(255, 0, 0, .05) 25%, rgba(255, 0, 0, .05) 26%, transparent 27%, transparent 74%, rgba(255, 0, 0, .05) 75%, rgba(255, 0, 0, .05) 76%, transparent 77%, transparent);
+        background-size: 50px 50px;
+        animation: gridScroll 20s linear infinite;
+    }
+
+    @keyframes gridScroll {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
+    }
+
+    .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 204, 0, 0.6);
+        border-radius: 50%;
+        animation: particleFloat 15s infinite;
+    }
+
+    @keyframes particleFloat {
+        0%, 100% { 
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+        }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { 
+            transform: translateY(-100vh) translateX(100px);
+            opacity: 0;
+        }
+    }
+
+    /* ========== MAIN CONTAINER ========== */
+    .breaking-container {
+        position: relative;
+        width: 95%;
+        max-width: 1800px;
+        background: rgba(0, 0, 0, 0.8);
+        border: 5px solid transparent;
+        border-image: linear-gradient(45deg, #ff0000, #ffcc00, #ff0000) 1;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 
+            0 0 60px rgba(255, 0, 0, 0.5),
+            0 0 100px rgba(255, 204, 0, 0.3),
+            inset 0 0 50px rgba(255, 0, 0, 0.1);
+        z-index: 10;
+        animation: containerPulse 3s infinite;
+    }
+
+    @keyframes containerPulse {
+        0%, 100% { 
+            box-shadow: 
+                0 0 60px rgba(255, 0, 0, 0.5),
+                0 0 100px rgba(255, 204, 0, 0.3),
+                inset 0 0 50px rgba(255, 0, 0, 0.1);
+        }
+        50% { 
+            box-shadow: 
+                0 0 80px rgba(255, 0, 0, 0.8),
+                0 0 120px rgba(255, 204, 0, 0.5),
+                inset 0 0 70px rgba(255, 0, 0, 0.2);
+        }
+    }
+
+    /* ========== HEADER SECTION ========== */
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 3px solid #ffcc00;
+        position: relative;
+    }
+
+    .header::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: #ff0000;
+        animation: borderGrow 2s ease-in-out infinite;
+    }
+
+    @keyframes borderGrow {
+        0%, 100% { width: 0%; }
+        50% { width: 100%; }
+    }
+
+    .logo {
+        font-size: 72px;
+        font-weight: 900;
+        background: linear-gradient(45deg, #ff0000, #ffcc00, #ff0000);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite;
+        text-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        letter-spacing: 5px;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .live-badge-container {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .live-badge {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        padding: 15px 35px;
+        border-radius: 50px;
+        box-shadow: 0 5px 25px rgba(255, 0, 0, 0.6);
+        animation: livePulse 1.5s infinite;
+        border: 3px solid #ffcc00;
+    }
+
+    @keyframes livePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+    }
+
+    .live-dot {
+        width: 18px;
+        height: 18px;
+        background: white;
+        border-radius: 50%;
+        margin-right: 12px;
+        animation: blink 1s infinite;
+        box-shadow: 0 0 15px white;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
+    }
+
+    .live-text {
+        color: white;
+        font-size: 32px;
+        font-weight: 900;
+        letter-spacing: 3px;
+    }
+
+    .time-display {
+        font-size: 28px;
+        color: #ffcc00;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+    }
+
+    /* ========== BREAKING LABEL ========== */
+    .breaking-section {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .breaking-label {
+        background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%);
+        color: #000;
+        font-size: 48px;
+        font-weight: 900;
+        padding: 20px 50px;
+        border-radius: 15px;
+        box-shadow: 
+            0 10px 30px rgba(255, 204, 0, 0.6),
+            inset 0 2px 10px rgba(255, 255, 255, 0.4);
+        animation: breakingPulse 1.2s infinite;
+        border: 4px solid #ff0000;
+        letter-spacing: 5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .breaking-label::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transform: rotate(45deg);
+        animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -50%; }
+        100% { left: 150%; }
+    }
+
+    @keyframes breakingPulse {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.6);
+        }
+        50% { 
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 204, 0, 0.9);
+        }
+    }
+
+    .news-counter {
+        background: rgba(255, 0, 0, 0.2);
+        padding: 15px 30px;
+        border-radius: 10px;
+        border: 2px solid #ff0000;
+        color: #ffcc00;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .counter-number {
+        color: white;
+        font-size: 32px;
+        font-weight: 900;
+    }
+
+    /* ========== TYPING NEWS DISPLAY ========== */
+    .news-display {
+        background: rgba(255, 0, 0, 0.05);
+        border: 3px solid #ff0000;
+        border-radius: 15px;
+        padding: 50px;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .news-display::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 204, 0, 0.1), transparent);
+        animation: scanline 3s linear infinite;
+    }
+
+    @keyframes scanline {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    .news-text {
+        font-size: 64px;
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1.6;
+        text-shadow: 
+            0 0 20px rgba(255, 204, 0, 0.8),
+            0 0 40px rgba(255, 0, 0, 0.5),
+            3px 3px 6px rgba(0, 0, 0, 0.8);
+        position: relative;
+        z-index: 1;
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 4px;
+        height: 60px;
+        background: #ffcc00;
+        margin-left: 5px;
+        animation: cursorBlink 0.7s infinite;
+        box-shadow: 0 0 10px #ffcc00;
+        vertical-align: middle;
+    }
+
+    @keyframes cursorBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    /* ========== SOUND VISUALIZER ========== */
+    .sound-visualizer {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        z-index: 100;
+    }
+
+    .sound-bar {
+        width: 12px;
+        background: linear-gradient(to top, #ff0000, #ffcc00);
+        border-radius: 6px;
+        box-shadow: 0 0 15px rgba(255, 204, 0, 0.6);
+        transition: height 0.1s ease;
+    }
+
+    .sound-bar.active {
+        animation: soundWave 0.6s ease-in-out infinite;
+    }
+
+    @keyframes soundWave {
+        0%, 100% { 
+            height: 30px;
+            opacity: 0.5;
+        }
+        50% { 
+            height: 80px;
+            opacity: 1;
+        }
+    }
+
+    .sound-bar:nth-child(1) { height: 30px; animation-delay: 0s; }
+    .sound-bar:nth-child(2) { height: 50px; animation-delay: 0.1s; }
+    .sound-bar:nth-child(3) { height: 70px; animation-delay: 0.2s; }
+    .sound-bar:nth-child(4) { height: 60px; animation-delay: 0.3s; }
+    .sound-bar:nth-child(5) { height: 40px; animation-delay: 0.4s; }
+    .sound-bar:nth-child(6) { height: 55px; animation-delay: 0.5s; }
+    .sound-bar:nth-child(7) { height: 35px; animation-delay: 0.6s; }
+
+    /* ========== START OVERLAY ========== */
+    .start-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    .start-button {
+        background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        color: white;
+        border: 6px solid #ffcc00;
+        padding: 50px 120px;
+        font-size: 56px;
+        font-weight: 900;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 
+            0 20px 60px rgba(255, 0, 0, 0.8),
+            inset 0 5px 15px rgba(255, 255, 255, 0.2);
+        animation: startPulse 1.5s infinite;
+        transition: all 0.3s;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    .start-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 25px 80px rgba(255, 0, 0, 1);
+    }
+
+    @keyframes startPulse {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.8);
+        }
+        50% { 
+            transform: scale(1.05);
+            box-shadow: 0 25px 80px rgba(255, 0, 0, 1);
+        }
+    }
+
+    .start-subtitle {
+        color: #ffcc00;
+        font-size: 32px;
+        margin-top: 40px;
+        animation: fadeInOut 2s infinite;
+        font-weight: 700;
+    }
+
+    @keyframes fadeInOut {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+    }
+
+    /* ========== LOADING SCREEN ========== */
+    .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .loading-content {
+        text-align: center;
+    }
+
+    .loading-spinner {
+        width: 100px;
+        height: 100px;
+        border: 8px solid rgba(255, 204, 0, 0.2);
+        border-top: 8px solid #ffcc00;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 30px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+        color: #ffcc00;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    /* ========== PROGRESS BAR ========== */
+    .progress-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #ff0000, #ffcc00, #ff0000);
+        background-size: 200% 100%;
+        animation: progressMove 2s linear infinite;
+        width: 0%;
+        transition: width 0.1s linear;
+    }
+
+    @keyframes progressMove {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1200px) {
+        .logo { font-size: 56px; }
+        .breaking-label { font-size: 36px; padding: 15px 40px; }
+        .news-text { font-size: 48px; }
+        .live-text { font-size: 24px; }
+    }
+
+    @media (max-width: 768px) {
+        .logo { font-size: 42px; }
+        .breaking-label { font-size: 28px; padding: 12px 30px; }
+        .news-text { font-size: 36px; }
+        .breaking-container { padding: 20px; }
+    }
+</style>
+```
+
+</head>
+<body>
+
+```
+<!-- Background Animation -->
+<div class="background-animation">
+    <div class="bg-grid"></div>
+    <div class="particles" id="particles"></div>
+</div>
+
+<!-- Start Overlay -->
+<div class="start-overlay" id="startOverlay" onclick="startNews()">
+    <div class="start-button">▶ शुरू करें</div>
+    <div class="start-subtitle">क्लिक करके समाचार प्रसारण शुरू करें</div>
+</div>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">समाचार लोड हो रहे हैं...</div>
+    </div>
+</div>
+
+<!-- Main Breaking Container -->
+<div class="breaking-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">⚡ BREAKING NEWS ⚡</div>
+        <div class="live-badge-container">
+            <div class="time-display" id="timeDisplay">00:00:00</div>
+            <div class="live-badge">
+                <div class="live-dot"></div>
+                <div class="live-text">LIVE</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breaking Section -->
+    <div class="breaking-section">
+        <div class="breaking-label">⚡ BREAKING ⚡</div>
+        <div class="news-counter">
+            समाचार: <span class="counter-number" id="newsCounter">0/0</span>
+        </div>
+    </div>
+
+    <!-- News Display with Typing Effect -->
+    <div class="news-display">
+        <div class="news-text" id="newsText">
+            <span id="typedText"></span><span class="cursor"></span>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+</div>
+
+<!-- Sound Visualizer -->
+<div class="sound-visualizer" id="soundVisualizer">
+    <div class="sound-bar active"></div>
+    <div class="sound-bar active"></div>
+    <div class="sound-bar active"></div>
+    <div class="sound-bar active"></div>
+    <div class="sound-bar active"></div>
+    <div class="sound-bar active"></div>
+    <div class="sound-bar active"></div>
+</div>
+
+<!-- Audio Elements -->
+<audio id="typingSound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_1f14cb5074.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="breakingSound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="bgMusic" loop preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_d1718ab41b.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    // ========== CONFIGURATION ==========
+    const CSV_LINK = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhoLPXYZWErFbe1kcwZjgTIohG1Rxdnbe7f2OCXl25zKRkELj8Gz7Nye-GG9OTxkHMcqijYtves4vm/pub?gid=0&single=true&output=csv';
+    
+    let newsData = [];
+    let currentIndex = 0;
+    let isTyping = false;
+    let typingInterval;
+    
+    const typingSound = document.getElementById('typingSound');
+    const breakingSound = document.getElementById('breakingSound');
+    const bgMusic = document.getElementById('bgMusic');
+    
+    // Set volumes
+    typingSound.volume = 0.3;
+    breakingSound.volume = 0.7;
+    bgMusic.volume = 0.2;
+
+    // ========== CREATE PARTICLES ==========
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            container.appendChild(particle);
+        }
+    }
+
+    // ========== UPDATE TIME ==========
+    function updateTime() {
+        const now = new Date();
+        const time = now.toLocaleTimeString('hi-IN', { 
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        document.getElementById('timeDisplay').innerText = time;
+    }
+    
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // ========== LOAD NEWS FROM GOOGLE SHEET ==========
+    async function loadNews() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.style.display = 'flex';
+        
+        try {
+            const response = await fetch(CSV_LINK + '&t=' + Date.now());
+            const text = await response.text();
+            const rows = text.split('\n').slice(1); // Skip header
+            
+            newsData = rows
+                .map(row => row.trim())
+                .filter(row => row.length > 5)
+                .map(row => {
+                    // Remove quotes and clean
+                    return row.replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+                })
+                .filter(text => text.length > 0);
+            
+            console.log(`✅ Loaded ${newsData.length} news items`);
+            loadingScreen.style.display = 'none';
+            return newsData.length > 0;
+        } catch (e) {
+            console.error("❌ Error loading news:", e);
+            // Fallback news
+            newsData = [
+                "राजस्थान में भारी बारिश से 4 लोगों की मौत, कई इलाके जलमग्न",
+                "दिल्ली मेट्रो की नई ब्लू लाइन एक्सटेंशन आज से शुरू",
+                "भारतीय क्रिकेट टीम ने ऑस्ट्रेलिया को 10 विकेट से हराया",
+                "शेयर बाजार में जबरदस्त तेजी, सेंसेक्स 1000 अंक ऊपर",
+                "सरकार ने किसानों के लिए नई योजना की घोषणा की"
+            ];
+            loadingScreen.style.display = 'none';
+            return true;
+        }
+    }
+
+    // ========== TYPING ANIMATION ==========
+    async function typeText(text) {
+        const typedTextEl = document.getElementById('typedText');
+        typedTextEl.textContent = '';
+        isTyping = true;
+        
+        // Play breaking sound
+        breakingSound.currentTime = 0;
+        breakingSound.play().catch(e => console.log("Breaking sound error:", e));
+        
+        // Wait for breaking sound to finish
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Start typing with sound
+        for (let i = 0; i < text.length; i++) {
+            if (!isTyping) break;
+            
+            typedTextEl.textContent += text[i];
+            
+            // Play typing sound (not for spaces)
+            if (text[i] !== ' ') {
+                typingSound.currentTime = 0;
+                typingSound.play().catch(e => {});
+            }
+            
+            // Variable speed: faster for spaces, slower for punctuation
+            let delay = 50;
+            if (text[i] === ' ') delay = 30;
+            if ([',', '.', '!', '?', '।'].includes(text[i])) delay = 200;
+            
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+        
+        isTyping = false;
+    }
+
+    // ========== UPDATE PROGRESS BAR ==========
+    function animateProgressBar(duration) {
+        const progressBar = document.getElementById('progressBar');
+        let progress = 0;
+        const increment = 100 / (duration / 50); // Update every 50ms
+        
+        const interval = setInterval(() => {
+            progress += increment;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+            }
+            progressBar.style.width = progress + '%';
+        }, 50);
+        
+        return interval;
+    }
+
+    // ========== UPDATE COUNTER ==========
+    function updateCounter() {
+        document.getElementById('newsCounter').textContent = 
+            `${currentIndex + 1}/${newsData.length}`;
+    }
+
+    // ========== MAIN NEWS LOOP ==========
+    async function runNewsLoop() {
+        if (newsData.length === 0) {
+            await loadNews();
+        }
+        
+        if (currentIndex >= newsData.length) {
+            currentIndex = 0;
+            await loadNews(); // Refresh data
+        }
+        
+        const newsText = newsData[currentIndex];
+        updateCounter();
+        
+        // Calculate typing duration
+        const typingDuration = newsText.length * 50 + 1500; // Approximate
+        
+        // Start progress bar
+        const progressInterval = animateProgressBar(typingDuration + 3000);
+        
+        // Type the text
+        await typeText(newsText);
+        
+        // Wait 3 seconds after typing completes
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Move to next news
+        currentIndex++;
+        
+        // Reset progress bar
+        document.getElementById('progressBar').style.width = '0%';
+        
+        // Continue loop
+        runNewsLoop();
+    }
+
+    // ========== START NEWS ==========
+    async function startNews() {
+        // Hide overlay
+        document.getElementById('startOverlay').style.display = 'none';
+        
+        // Create particles
+        createParticles();
+        
+        // Start background music
+        bgMusic.play().catch(e => console.log("BG music error:", e));
+        
+        // Load and start news
+        const loaded = await loadNews();
+        if (loaded) {
+            runNewsLoop();
+        }
+    }
+
+    // ========== VISIBILITY CHANGE ==========
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            bgMusic.pause();
+            isTyping = false;
+        } else {
+            bgMusic.play().catch(e => {});
+        }
+    });
+</script>
+```
+
+</body>
+</html>
